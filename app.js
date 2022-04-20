@@ -9,11 +9,11 @@ const fs = require('fs');
 
 // Configure the app
 const sesionPath = "./data/ig.json";
-const userToSearch = 'desiredUser';
+const userToSearch = ['user1','user2']; // List of all searched users
 const followerLimit = 5000; // if -1 we get all the followers
 const timeMargin = 6;
 const listPath = "";
-const listFileName = "followers_"+userToSearch+".txt";
+const listFileName = "followers_";
 
 function Save(data) {
   // here you would save it to a file/database etc.
@@ -55,6 +55,7 @@ function Load() {
 
 
 async function login() {
+  console.log("Logging in");
   ig.state.generateDevice(process.env.IG_USER);
   ig.state.proxyUrl = process.env.IG_PROXY;
   // This function executes after every request
@@ -103,7 +104,11 @@ async function login() {
 
 
 login().then(async () => {
-    const targetUser = await ig.user.searchExact(userToSearch);
+  console.log("Logged in");
+  for(searchedUser in userToSearch){
+    console.log('-------------------------------------------------------');
+    console.log("Searching "+userToSearch[searchedUser]);
+    const targetUser = await ig.user.searchExact(userToSearch[searchedUser]);
     
     const followingFeed = ig.feed.accountFollowing(targetUser.pk);
     const followersFeed = ig.feed.accountFollowers(targetUser.pk);
@@ -118,12 +123,12 @@ login().then(async () => {
     var myNeededUsers = new Map();
     notFollowingYou.forEach(user =>  myNeededUsers.set(user.username,user.pk));
 
-    GetFinalList(myNeededUsers);
-    
+    await GetFinalList(myNeededUsers,userToSearch[searchedUser]);
+  }  
   });
 
   // This function will get the final list filtering users with more than followerLimit followers
-  async function GetFinalList(users){
+  async function GetFinalList(users,user){
     console.log("Getting final list");
     if(followerLimit != -1){
         const iterator1 = users.entries();
@@ -141,14 +146,15 @@ login().then(async () => {
             await new Promise(resolve => setTimeout(resolve, time));
         }
     }
-    SaveResponse(users);   
+    SaveResponse(users,user);   
 }
 
 // This function will save the response
-async function SaveResponse(string){
+async function SaveResponse(string,user){
     const result = [...string.keys()].flat().join('\n')
-    console.log("Saved in "+listPath+listFileName);
-      fs.writeFile(listPath+listFileName, result, function(err, result) {
+    var fileName = listPath+listFileName+user+".txt";
+    console.log("Saved in "+fileName);
+      fs.writeFile(fileName, result, function(err, result) {
         if(err) console.error(err);
       });
 }
