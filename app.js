@@ -6,11 +6,12 @@ const {
   } = require('instagram-private-api');
 const ig = new IgApiClient();
 const fs = require('fs');
+const inquirer = require('inquirer');
 
 // Configure the app
-const sesionPath = "./data/ig.json";
-const userToSearch = ['user1','user2']; // List of all searched users
-const followerLimit = 5000; // if -1 we get all the followers
+const sesionPath = "./ig.json";
+var userToSearch = [];
+var followerLimit; // if -1 we get all the followers
 const timeMargin = 6;
 const listPath = "";
 const listFileName = "followers_";
@@ -53,10 +54,16 @@ function Load() {
   return '';
 }
 
-
 async function login() {
   console.log("Logging in");
-  ig.state.generateDevice(process.env.IG_USER);
+  const {
+    username
+  } = await inquirer.prompt([{
+    type: 'input',
+    name: 'username',
+    message: `Enter your username`,
+  }, ]);
+  ig.state.generateDevice(username);
   ig.state.proxyUrl = process.env.IG_PROXY;
   // This function executes after every request
   ig.request.end$.subscribe(async () => {
@@ -69,8 +76,15 @@ async function login() {
     // the string should be a JSON object
     await ig.state.deserialize(Load());
   }
+  const {
+    password
+  } = await inquirer.prompt([{
+    type: 'input',
+    name: 'password',
+    message: `Enter your password`,
+  }, ]);
   // This call will provoke request.end$ stream
-  await ig.account.login(process.env.IG_USER, process.env.IG_PASS).catch(
+  await ig.account.login(username, password).catch(
     IgLoginTwoFactorRequiredError,
     async err => {
       const {
@@ -102,9 +116,37 @@ async function login() {
   // Most of the time you don't have to login after loading the state
 }
 
-
 login().then(async () => {
   console.log("Logged in");
+  console.log('------------------------------------------------------');
+  console.log("Introduce one by one all users you want to search");
+
+  do{
+    var {
+      userEntered
+    } = await inquirer.prompt([{
+      type: 'input',
+      name: 'userEntered',
+      message: `Enter a user (press enter to stop)`,
+    }, ]);
+    if(userEntered!=""){
+      userToSearch.push(userEntered);
+    }
+  }while(userEntered!="");
+
+  console.log('------------------------------------------------------');
+  const {
+    follLimit
+  } = await inquirer.prompt([{
+    type: 'input',
+    name: 'follLimit',
+    message: `Enter a follower limit (-1 is no limit)`,
+  }, ]);
+
+  //userToSearch.push
+
+  followerLimit = parseInt(follLimit)
+
   for(searchedUser in userToSearch){
     console.log('-------------------------------------------------------');
     console.log("Searching "+userToSearch[searchedUser]);
@@ -126,9 +168,10 @@ login().then(async () => {
     await GetFinalList(myNeededUsers,userToSearch[searchedUser]);
   }  
   });
-
+  
   // This function will get the final list filtering users with more than followerLimit followers
   async function GetFinalList(users,user){
+
     console.log("Getting final list");
     if(followerLimit != -1){
         const iterator1 = users.entries();
