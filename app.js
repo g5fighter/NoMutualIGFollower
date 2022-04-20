@@ -79,7 +79,8 @@ async function login() {
   const {
     password
   } = await inquirer.prompt([{
-    type: 'input',
+    type: 'password',
+    mask: '*',
     name: 'password',
     message: `Enter your password`,
   }, ]);
