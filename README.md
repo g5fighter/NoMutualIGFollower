@@ -1,4 +1,4 @@
-# NoMutualIGFollower
+# No Mutual IG Follower
 This script lets you know wich users doesn't follow you but filtering big accounts.
 
 ## How to use
@@ -7,10 +7,10 @@ This script lets you know wich users doesn't follow you but filtering big accoun
 ```
 // Configure the app
 const sesionPath = "./data/ig.json";
-const userToSearch = 'desiredUser';
+const userToSearch = ['user1','user2']; // List of all searched users
 const followerLimit = 5000; // if -1 we get all the followers
 const timeMargin = 6;
 const listPath = "";
-const listFileName = "followers_"+userToSearch+".txt";
+const listFileName = "followers_";
 ```
 - Run the program and you will get on a file the complete list
