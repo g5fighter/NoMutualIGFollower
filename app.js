@@ -178,12 +178,13 @@ login().then(async () => {
         var valIndex = 1;
         var remainingItems = users.size;
         while((val = iterator1.next().value)!=undefined){
-            console.log(`Checking: ${valIndex}/${remainingItems} -> ${val[0]}`);
+            console.log(`Checking: ${valIndex}/${remainingItems}`);
             valIndex++;
             ig.user.info(val[1]).then(foll => {
                 if(foll.follower_count>followerLimit){
                     users.delete(val[0]);
                 }
+                console.log(`${val[0]} -> Follower Count: ${foll.follower_count}`)
             }).catch(error => console.log(error));
             const time = Math.round(Math.random() * timeMargin * 1000) + 1000;
             await new Promise(resolve => setTimeout(resolve, time));
