@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "instagram-private-api": "^1.45.3"
+  }
+}
