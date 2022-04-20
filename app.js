@@ -55,7 +55,7 @@ function Load() {
 }
 
 async function login() {
-  console.log("Logging in");
+  console.log("|- Logging in");
   const {
     username
   } = await inquirer.prompt([{
@@ -117,9 +117,9 @@ async function login() {
 }
 
 login().then(async () => {
-  console.log("Logged in");
+  console.log("|- Logged in");
   console.log('------------------------------------------------------');
-  console.log("Introduce one by one all users you want to search");
+  console.log("|- Introduce one by one all users you want to search");
 
   do{
     var {
@@ -149,7 +149,7 @@ login().then(async () => {
 
   for(searchedUser in userToSearch){
     console.log('-------------------------------------------------------');
-    console.log("Searching "+userToSearch[searchedUser]);
+    console.log("|- Searching "+userToSearch[searchedUser]);
     const targetUser = await ig.user.searchExact(userToSearch[searchedUser]);
     
     const followingFeed = ig.feed.accountFollowing(targetUser.pk);
@@ -171,8 +171,7 @@ login().then(async () => {
   
   // This function will get the final list filtering users with more than followerLimit followers
   async function GetFinalList(users,user){
-
-    console.log("Getting final list");
+    // console.log("Getting final list");
     if(followerLimit != -1){
         const iterator1 = users.entries();
         var valIndex = 1;
@@ -197,7 +196,7 @@ login().then(async () => {
 async function SaveResponse(string,user){
     const result = [...string.keys()].flat().join('\n')
     var fileName = listPath+listFileName+user+".txt";
-    console.log("Saved in "+fileName);
+    console.log("|- Saved in "+fileName);
       fs.writeFile(fileName, result, function(err, result) {
         if(err) console.error(err);
       });
