@@ -13,11 +13,17 @@ This script lets you know wich users doesn't follow you but filtering big accoun
 
 - In top of script you will find the following lines, edit them acoording to your needs.
 ```
+// Calcular previamente el numero de esperas
 // Configure the app
-const sesionPath = "./ig.json";
+var loggedUser = '';
 var userToSearch = [];
-var followerLimit; // if -1 we get all the followers
+// if -1 we get all the following
+// if -2 we get all the following but divided in tiers -> 5,10,50,100,500,1000 in k
+var followerLimit; 
 const timeMargin = 6;
 const listPath = "";
 const listFileName = "followers_";
+
+// Get the feed several times
+const exhaustiveMode = 5;
 ```

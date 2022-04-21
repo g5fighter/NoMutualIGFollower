@@ -20,6 +20,7 @@ const timeMargin = 6;
 const listPath = "";
 const listFileName = "followers_";
 
+// Get the feed several times
 const exhaustiveMode = 5;
 
 function SesionPath(){
