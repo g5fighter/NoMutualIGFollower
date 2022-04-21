@@ -8,6 +8,7 @@ const ig = new IgApiClient();
 const fsNorm = require('fs');
 const fs = fsNorm.promises;
 const inquirer = require('inquirer');
+const Bluebird = require('bluebird');
 
 // Calcular previamente el numero de esperas
 // Configure the app
@@ -20,7 +21,6 @@ const timeMargin = 6;
 const listPath = "";
 const listFileName = "followers_";
 
-// Get the feed several times
 const exhaustiveMode = 5;
 
 function SesionPath(){
@@ -103,7 +103,7 @@ async function login() {
       message: `Enter your password`,
     }, ]);
     // This call will provoke request.end$ stream
-    await ig.account.login(username, password).catch(
+    return Bluebird.try(() => ig.account.login(username, password)).catch(
       IgLoginTwoFactorRequiredError,
       async err => {
         const {
@@ -131,7 +131,7 @@ async function login() {
           trustThisDevice: '1', // Can be omitted as '1' is used by default
         });
       },
-    );
+    ).catch(e => {console.log(e); console.log(e.stack); process.exit(1);});
     // Most of the time you don't have to login after loading the state
   }else{
     console.log("|- Session loaded");
@@ -180,6 +180,8 @@ login().then(async () => {
 
     const followers = await getAllItemsFromFeed(followersFeed);
     const following = await getAllItemsFromFeed(followingFeed);
+
+    console.log(`Follower Count: ${followers.length} - Following Count: ${following.length}`);
     
     const followersUsername = new Set(followers.map(({ username }) => username));
 
@@ -190,20 +192,34 @@ login().then(async () => {
       // for from 0 to exhaustive mode
       var globalUsernamesSet = new Set([...followersUsername]);
       var globalAllFollowing = following;
-      for(var i=0; i<exhaustiveMode; i++){
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        console.log("|- Getting feed "+(2+i));
 
+      var times = [];
+      var timeAmount = 0;
+      for (var i = 0; i < exhaustiveMode; i++) {
+        var time = Math.round(Math.random() * timeMargin * 1000) + 1000;
+        timeAmount += time;
+        times.push(time);
+      }
+      timeAmount/=1000;
+      console.log("Estimated time: "+Math.trunc((timeAmount/60))+" minutes "+Math.trunc((timeAmount%60))+" seconds");
+      for(var i=0; i<exhaustiveMode; i++){
+        
+        console.log(`|- Getting feed ${(2+i)} - Remaining time: ${Math.trunc((timeAmount/60))} minutes ${Math.trunc((timeAmount%60))} seconds`);
+        await new Promise(resolve => setTimeout(resolve, times[i]));
         const followingFeed2 = ig.feed.accountFollowing(targetUser.pk);
         const followersFeed2 = ig.feed.accountFollowers(targetUser.pk);
   
         const followers2 = await getAllItemsFromFeed(followersFeed2);
         const following2 = await getAllItemsFromFeed(followingFeed2);
 
+        console.log(`Follower Count: ${followers2.length} - Following Count: ${following2.length}`);
+
         const followersUsername2 = new Set(followers2.map(({ username }) => username));
       
         globalUsernamesSet = new Set([...globalUsernamesSet, ...followersUsername2]);
         globalAllFollowing = [...globalAllFollowing, ...following2];
+      
+        timeAmount-=(times[i]/1000);
       }
       // Filter the ones who are not following you
       notFollowingYou = globalAllFollowing.filter(({ username }) => !globalUsernamesSet.has(username));
