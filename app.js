@@ -1,14 +1,15 @@
-require('dotenv').config();
+import 'dotenv/config';
 
-const {
+import {
     IgApiClient,
     IgLoginTwoFactorRequiredError
-  } = require('instagram-private-api');
+} from 'instagram-private-api';
+
 const ig = new IgApiClient();
-const fsNorm = require('fs');
+import fsNorm from 'fs';
 const fs = fsNorm.promises;
-const inquirer = require('inquirer');
-const Bluebird = require('bluebird');
+import inquirer from 'inquirer';
+import Bluebird from 'bluebird';
 
 // Calcular previamente el numero de esperas
 // Configure the app

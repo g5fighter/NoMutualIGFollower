@@ -1,6 +1,9 @@
 {
+  "type": "module",
   "dependencies": {
+    "bluebird": "^3.7.2",
     "dotenv": "^16.0.0",
+    "inquirer": "^8.2.2",
     "instagram-private-api": "^1.45.3"
   }
 }
