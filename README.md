@@ -1,17 +1,19 @@
 # No Mutual IG Follower
-This script lets you know wich users doesn't follow you but filtering big accounts.
 
-## How to use
-- Run the program 
-- You will be asked to introduce:
-  * Username
-  * Password
-  * Users to search
-  * Follower limit
-- If you have 2fa the program will ask you to introduce it if necessary.
-- And you will get the complete list in a file for each user
+This Python script helps you identify users on Instagram who don't follow you back, while also filtering out accounts with a large number of followers.
 
-- In top of script you will find the following lines, edit them acoording to your needs.
+## How to Use
+1. Run the script.
+2. You'll be prompted to enter the following information:
+    - Your Instagram username
+    - Your Instagram password
+    - Users you want to search for
+    - Follower limit (accounts exceeding this limit will be filtered out)
+3. If you have two-factor authentication enabled, the program will request it if necessary.
+4. After execution, you'll receive a complete list of users in separate files for each user.
+
+## Configuration
+At the top of the script, you'll find the following lines. Edit them according to your preferences:
 ```
 // Calcular previamente el numero de esperas
 // Configure the app
@@ -27,3 +29,4 @@ const listFileName = "followers_";
 // Get the feed several times
 const exhaustiveMode = 5;
 ```
+Feel free to adjust these settings to tailor the script to your specific needs.
